@@ -1,37 +1,37 @@
-import { Link } from "react-router-dom";
-import "./App.css";
+import { Link, useLoaderData } from "react-router-dom";
 
-function App() {
-  const handleAddUser = (e) => {
+const Update = () => {
+  const loadedUser = useLoaderData();
+
+  const handleUpdate = (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.name.value;
     const email = form.email.value;
-    const user = { name, email };
-    console.log(user);
-    e.target.reset();
+    const updatedUser = { name, email };
+    console.log(updatedUser);
+    console.log(loadedUser);
 
-    fetch("http://localhost:5000/users", {
-      method: "POST",
+    fetch(`http://localhost:5000/users/${loadedUser._id}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(user),
+      body: JSON.stringify(updatedUser),
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        if (data.insertedId) {
-          console.log("User added succesfully.");
-        }
       });
   };
 
   return (
-    <>
-      <h1 className="text-4xl mb-4">Simple crud</h1>
-      <form onSubmit={handleAddUser}>
+    <div>
+      <h3 className="mb-5">Update information of {loadedUser.name}</h3>
+
+      <form onSubmit={handleUpdate}>
         <input
+          defaultValue={loadedUser.name}
           type="text"
           name="name"
           placeholder="Name"
@@ -39,6 +39,7 @@ function App() {
         />
         <br />
         <input
+          defaultValue={loadedUser.email}
           type="email"
           name="email"
           placeholder="Email"
@@ -48,14 +49,14 @@ function App() {
         <input
           className="btn btn-neutral mb-4"
           type="submit"
-          value={"Add User"}
+          value={"Update"}
         />
-        <Link to="/users">
-          <button className="btn btn-neutral">Show users</button>
+        <Link to="/">
+          <button className="btn btn-neutral">Back</button>
         </Link>
       </form>
-    </>
+    </div>
   );
-}
+};
 
-export default App;
+export default Update;
